@@ -6,7 +6,7 @@ const GamesList = ({ games }) => {
         <p>THere are no games yet</p>
     );
     const gamesList = (
-        <p>games list</p>
+        <ul>{games.map((item) => <li key={item.id}>{item.name}</li>)}</ul>
     );
     return(
         <div>
