@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
+import { connect } from 'react-redux';
+import { Redirect } from 'react-router-dom';
+import { saveGame} from './actions/games.actions';
 
 class GameForm extends Component {
     constructor(props) {
@@ -7,7 +10,9 @@ class GameForm extends Component {
         this.state = {
             title: '',
             cover: '',
-            errors: {}
+            errors: {},
+            loading: false,
+            done: false
         }
     }
     
@@ -33,13 +38,24 @@ class GameForm extends Component {
         if (title === '') errors.title = "Can't be empty";
         if (cover === '') errors.cover = "Can't be empty";
         this.setState({ errors });
+
+        const isValid = Object.keys(errors).length === 0;
+
+        if (isValid) {
+            this.setState({ loading: true });
+            this.props.saveGame({ title, cover }).then(
+                () => { this.setState({ done: true })},
+                (err) => err.response.json().then(({errors}) => this.setState({ errors, loading: false }))
+            );
+        }
     }
 
     render() {
-        const { title, cover, errors } = this.state;
-        return (
-            <form className="ui form" onSubmit={this.handleSubmit}>
+        const { title, cover, errors, loading, done } = this.state;
+        const form = (
+            <form className={classnames('ui', 'form', { loading: loading })} onSubmit={this.handleSubmit}>
                 <h1>Add new game</h1>
+                {!!errors.global && <div className="ui negative message"><p>{errors.global}</p></div>}
 
                 <div className={classnames('field', { error: !!errors.title })}>
                     <label htmlFor="title">Title</label>
@@ -69,7 +85,12 @@ class GameForm extends Component {
                 </div>
             </form>
         );
+        return (
+            <div>
+                { done ? <Redirect to='/games' /> : form}
+            </div>
+        );
     }
 }
 
-export default GameForm;
+export default connect(null, { saveGame })(GameForm);
