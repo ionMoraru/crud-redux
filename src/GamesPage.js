@@ -9,7 +9,6 @@ class GamesPage extends Component {
         this.props.fetchGames();
     }
     render() {
-        console.log(this.props.games)
         return (
             <div>
                 Games List

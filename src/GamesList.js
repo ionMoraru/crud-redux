@@ -1,12 +1,15 @@
 import React from 'react';
-import PropsTypes from 'prop-types';
+import PropTypes from 'prop-types';
+import GameCard from './GameCard';
 
 const GamesList = ({ games }) => {
     const emptyMessage = (
         <p>THere are no games yet</p>
     );
     const gamesList = (
-        <ul>{games.map((item) => <li key={item.id}>{item.name}</li>)}</ul>
+        <div className='ui four cards'>
+            { games.map((item) => <GameCard key={item._id} game={item} />) }
+        </div>
     );
     return(
         <div>
@@ -15,8 +18,8 @@ const GamesList = ({ games }) => {
     );
 }
 
-GamesList.PropsTypes = {
-    games: PropsTypes.array.isRequired
+GamesList.PropTypes = {
+    games: PropTypes.array.isRequired
 }
 
 export default GamesList;
